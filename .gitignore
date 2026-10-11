@@ -14,6 +14,10 @@ out/
 .turbo/
 *.tsbuildinfo
 
+# moon
+.moon/cache/
+.moon/docker/
+
 # Env & secrets (NEVER commit real values)
 .env
 .env.local

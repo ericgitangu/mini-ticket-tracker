@@ -1,0 +1,26 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'application'
+language: 'python'
+
+tasks:
+  test:
+    command: 'uv run pytest'
+    toolchain: 'system'
+    options:
+      cache: false
+  lint:
+    command: 'uv run ruff check .'
+    toolchain: 'system'
+  format:
+    command: 'uv run ruff format --check .'
+    toolchain: 'system'
+  migrate:
+    command: 'uv run alembic upgrade head'
+    toolchain: 'system'
+    options:
+      cache: false
+  dev:
+    command: 'uv run uvicorn app.main:app --reload --port 8000'
+    toolchain: 'system'
+    preset: 'server'
