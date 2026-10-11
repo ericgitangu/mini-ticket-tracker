@@ -6,11 +6,11 @@ A small support-ticket tracker: a REST API over PostgreSQL with a lightweight we
   database-bound CRUD service. Python also matches the reviewing team's stack.
 - **Database** — PostgreSQL: relational integrity for filtered/aggregated data, with enum
   CHECK constraints and indexes on the columns we filter and sort by.
-- **Web** — Next.js (App Router), acting as a BFF and consuming a TypeScript client generated
-  from the API's OpenAPI schema so the two can't silently drift.
+- **Web** — Next.js (App Router, React 19) as a BFF: Server Components read the API, Server
+  Actions handle mutations, and the UI is built with shadcn/ui + Lucide. Its TypeScript client is
+  generated from the API's OpenAPI schema, so client and server can't silently drift.
 
-> Status: the API is complete and covered by integration tests. The Next.js web UI is in
-> progress and consumes the same OpenAPI contract.
+Both services are complete, run together with one command, and the whole stack is containerized.
 
 ## Prerequisites
 
@@ -25,20 +25,26 @@ The test suite needs Docker running — it starts an ephemeral Postgres via `tes
 
 ## Run it
 
-### With Docker (API + database)
+### With Docker (full stack)
 ```bash
-docker compose up --build        # API on :8000 ( /docs ), Postgres on :5432
+docker compose up --build        # web :3000, API :8000 ( /docs ), Postgres :5432
 ```
-Host ports are configurable to avoid clashes: `DB_PORT=5433 API_PORT=8080 docker compose up`.
+Host ports are configurable to avoid clashes: `DB_PORT=5433 API_PORT=8080 WEB_PORT=3001 docker compose up`.
 
 ### On the host
 ```bash
+# API
 docker compose up -d db          # Postgres only
 cd api
 uv sync
 export DATABASE_URL=postgresql+asyncpg://tickets:tickets@localhost:5432/tickets
 uv run alembic upgrade head
 uv run uvicorn app.main:app --reload --port 8000
+
+# Web (separate shell)
+cd web
+pnpm install
+pnpm dev                         # http://localhost:3000, reaches the API at API_BASE_URL
 ```
 
 ### Tests
@@ -51,8 +57,10 @@ cd api && uv run pytest          # or: make test   /   moon run api:test
 |----------------|---------|---------|
 | `DATABASE_URL` | api     | `postgresql+asyncpg://tickets:tickets@localhost:5432/tickets` |
 | `CORS_ORIGINS` | api     | `http://localhost:3000` |
+| `API_BASE_URL` | web (server) | `http://localhost:8000` |
 | `DB_PORT`      | compose | host port for Postgres (default `5432`) |
 | `API_PORT`     | compose | host port for the API (default `8000`) |
+| `WEB_PORT`     | compose | host port for the web app (default `3000`) |
 
 ## API
 | Method | Path             | Description |
@@ -67,9 +75,9 @@ A ticket has: `id` (uuid), `title`, `description?`, `status` (`open|in_progress|
 (Swagger) and `/redoc` (ReDoc).
 
 ## Layout
-A moon monorepo: `api/` (FastAPI service) and `web/` (Next.js, in progress). `make` wraps the
+A moon monorepo: `api/` (FastAPI service) and `web/` (Next.js + shadcn/ui). `make` wraps the
 common moon tasks; `docker compose` runs the whole stack with Postgres on a persistent volume
-and the API source bind-mounted for live reload.
+and both app sources bind-mounted for live reload.
 
 ## Deployment
 The API is a standalone container, deployable to any container host (the reference target is
@@ -92,6 +100,8 @@ Apps). The web app deploys to Vercel and talks to the API server-side.
   Keyset pagination and time-ordered UUIDs are the changes I'd make once the table is large.
 - **Integration tests over a real Postgres**, not mocks — they exercise the actual query and
   migration paths, which is what I'd trust before shipping.
+- **Mutations via Server Actions**, with optimistic status updates; shadcn/ui is themed to the
+  app's own palette rather than shipped as-is, so the UI reads as deliberate, not templated.
 - **Assumptions:** new tickets default to `status=open` and `priority=medium`; `PATCH` requires at
   least one of status/priority; `limit` is capped at 1–100 (default 20).
 - **Deliberately out of scope** (the point of the exercise is knowing where to stop): auth,
