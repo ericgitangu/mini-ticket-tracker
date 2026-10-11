@@ -10,7 +10,7 @@ export default function Page() {
     <main className="mx-auto max-w-3xl px-5 py-12 sm:py-16">
       <header>
         <h1 className="font-display text-xl font-semibold tracking-tight">Ticket Tracker</h1>
-        <p className="mt-1 text-sm text-muted">Triage and track support tickets.</p>
+        <p className="mt-1 text-sm text-muted-foreground">Triage and track support tickets.</p>
       </header>
 
       <Suspense fallback={<QueueSkeleton />}>
@@ -32,8 +32,10 @@ async function Dashboard() {
       </div>
 
       <div className="mt-10">
-        <h2 className="font-display text-sm font-semibold text-muted">Tickets</h2>
-        <TicketList tickets={page.data} />
+        <h2 className="font-display text-sm font-semibold text-muted-foreground">Tickets</h2>
+        <div className="mt-4">
+          <TicketList tickets={page.data} />
+        </div>
       </div>
     </>
   );
@@ -42,8 +44,8 @@ async function Dashboard() {
 function QueueSkeleton() {
   return (
     <div className="mt-8 animate-pulse">
-      <div className="h-10 w-full rounded-md border border-hairline bg-surface" />
-      <div className="mt-4 h-6 w-64 rounded bg-hairline" />
+      <div className="h-10 w-full rounded-lg border bg-card" />
+      <div className="mt-4 h-6 w-64 rounded bg-muted" />
     </div>
   );
 }

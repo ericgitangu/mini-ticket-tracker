@@ -2,6 +2,13 @@
 
 import { useOptimistic, useState, useTransition } from "react";
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { updateStatusAction } from "@/app/actions";
 import { STATUSES, type Status } from "@/lib/api/types";
 import { statusMeta } from "./badges";
@@ -22,25 +29,27 @@ export function StatusSelect({ id, status }: { id: string; status: Status }) {
 
   const meta = statusMeta(optimistic);
   return (
-    <select
-      aria-label="Change status"
-      value={optimistic}
-      disabled={isPending}
-      onChange={(event) => onChange(event.target.value as Status)}
-      className="rounded-md border px-2.5 py-1 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-jade/50 disabled:opacity-60"
-      style={{
-        color: meta.color,
-        borderColor: failed
-          ? "var(--color-prio-high)"
-          : `color-mix(in oklab, ${meta.color} 35%, transparent)`,
-        backgroundColor: `color-mix(in oklab, ${meta.color} 8%, transparent)`,
-      }}
-    >
-      {STATUSES.map((option) => (
-        <option key={option} value={option}>
-          {statusMeta(option).label}
-        </option>
-      ))}
-    </select>
+    <Select value={optimistic} onValueChange={(value) => onChange(value as Status)} disabled={isPending}>
+      <SelectTrigger
+        aria-label="Change status"
+        className="w-[9.5rem] font-medium"
+        style={{
+          color: meta.color,
+          borderColor: failed
+            ? "var(--color-prio-high)"
+            : `color-mix(in oklab, ${meta.color} 35%, transparent)`,
+          backgroundColor: `color-mix(in oklab, ${meta.color} 8%, transparent)`,
+        }}
+      >
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        {STATUSES.map((option) => (
+          <SelectItem key={option} value={option}>
+            {statusMeta(option).label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }

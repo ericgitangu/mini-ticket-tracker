@@ -8,9 +8,9 @@ export function QueueBar({ stats }: { stats: Stats }) {
 
   return (
     <section className="mt-8">
-      <div className="flex h-10 w-full overflow-hidden rounded-md border border-hairline bg-surface">
+      <div className="flex h-10 w-full overflow-hidden rounded-lg border bg-card">
         {total === 0 ? (
-          <div className="flex w-full items-center justify-center text-sm text-muted">
+          <div className="flex w-full items-center justify-center text-sm text-muted-foreground">
             The queue is empty
           </div>
         ) : (
@@ -34,11 +34,11 @@ export function QueueBar({ stats }: { stats: Stats }) {
           return (
             <div key={key} className="flex items-baseline gap-2">
               <span
-                className="h-2.5 w-2.5 self-center rounded-full"
+                className="size-2.5 self-center rounded-full"
                 style={{ backgroundColor: meta.color }}
               />
               <dd className="font-display text-2xl font-semibold tabular-nums">{stats[key]}</dd>
-              <dt className="text-sm text-muted">{meta.label}</dt>
+              <dt className="text-sm text-muted-foreground">{meta.label}</dt>
             </div>
           );
         })}

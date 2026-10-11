@@ -1,13 +1,23 @@
 "use client";
 
 import { useActionState, useEffect, useRef } from "react";
+import { Loader2, Plus } from "lucide-react";
 
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { createTicketAction } from "@/app/actions";
 import { PRIORITIES } from "@/lib/api/types";
 import { priorityMeta } from "./badges";
-
-const FIELD =
-  "w-full rounded-md border border-hairline bg-surface px-3 py-2 text-sm outline-none placeholder:text-muted/70 focus-visible:border-jade focus-visible:ring-2 focus-visible:ring-jade/40";
 
 export function NewTicketForm() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -21,56 +31,41 @@ export function NewTicketForm() {
   }, [state]);
 
   return (
-    <form
-      ref={formRef}
-      action={formAction}
-      className="rounded-md border border-hairline bg-surface p-5"
-      aria-label="New ticket"
-    >
-      <h2 className="font-display text-sm font-semibold">New ticket</h2>
-      <div className="mt-4 space-y-3">
-        <input
-          name="title"
-          className={FIELD}
-          placeholder="What needs attention?"
-          maxLength={200}
-          required
-        />
-        <textarea
+    <Card className="p-5">
+      <form ref={formRef} action={formAction} aria-label="New ticket" className="space-y-3">
+        <h2 className="font-display text-sm font-semibold">New ticket</h2>
+        <Input name="title" placeholder="What needs attention?" maxLength={200} required />
+        <Textarea
           name="description"
-          className={`${FIELD} resize-none`}
           placeholder="Add detail (optional)"
           rows={2}
+          className="resize-none"
         />
         <div className="flex items-center justify-between gap-3">
-          <label className="flex items-center gap-2 text-sm text-muted">
-            Priority
-            <select
-              name="priority"
-              defaultValue="medium"
-              className="rounded-md border border-hairline bg-surface px-2.5 py-1.5 text-sm text-ink outline-none focus-visible:ring-2 focus-visible:ring-jade/40"
-            >
-              {PRIORITIES.map((option) => (
-                <option key={option} value={option}>
-                  {priorityMeta(option).label}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button
-            type="submit"
-            disabled={isPending}
-            className="rounded-md bg-jade px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-jade-deep disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            {isPending ? "Creating…" : "Create ticket"}
-          </button>
+          <div className="flex items-center gap-2">
+            <Label htmlFor="priority" className="text-muted-foreground">
+              Priority
+            </Label>
+            <Select name="priority" defaultValue="medium">
+              <SelectTrigger id="priority" className="w-[7.5rem]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {PRIORITIES.map((option) => (
+                  <SelectItem key={option} value={option}>
+                    {priorityMeta(option).label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? <Loader2 className="animate-spin" /> : <Plus />}
+            {isPending ? "Creating" : "Create ticket"}
+          </Button>
         </div>
-        {state.error ? (
-          <p className="text-sm" style={{ color: "var(--color-prio-high)" }}>
-            {state.error}
-          </p>
-        ) : null}
-      </div>
-    </form>
+        {state.error ? <p className="text-sm text-destructive">{state.error}</p> : null}
+      </form>
+    </Card>
   );
 }

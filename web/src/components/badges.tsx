@@ -1,3 +1,4 @@
+import { Badge } from "@/components/ui/badge";
 import type { Priority, Status } from "@/lib/api/types";
 
 const STATUS_META: Record<Status, { label: string; color: string }> = {
@@ -18,16 +19,17 @@ export const priorityMeta = (priority: Priority) => PRIORITY_META[priority];
 export function PriorityBadge({ priority }: { priority: Priority }) {
   const meta = PRIORITY_META[priority];
   return (
-    <span
-      className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-medium"
+    <Badge
+      variant="outline"
+      className="gap-1.5 font-medium"
       style={{
         color: meta.color,
         borderColor: `color-mix(in oklab, ${meta.color} 35%, transparent)`,
         backgroundColor: `color-mix(in oklab, ${meta.color} 10%, transparent)`,
       }}
     >
-      <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: meta.color }} />
+      <span className="size-1.5 rounded-full" style={{ backgroundColor: meta.color }} />
       {meta.label}
-    </span>
+    </Badge>
   );
 }
