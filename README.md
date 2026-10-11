@@ -6,8 +6,8 @@ A small support-ticket tracker: a REST API over PostgreSQL with a lightweight we
 - **Database:** PostgreSQL
 - **Web:** Next.js (App Router), consuming a client generated from the API's OpenAPI schema
 
-> The API is complete and covered by integration tests. The Next.js UI is built on top of
-> the same OpenAPI contract.
+> Status: the API is complete and covered by integration tests. The Next.js web UI is in
+> progress and consumes the same OpenAPI contract.
 
 ## Run it
 
