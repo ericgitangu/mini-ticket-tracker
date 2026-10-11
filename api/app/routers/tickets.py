@@ -71,3 +71,12 @@ async def update_ticket(ticket_id: UUID, payload: TicketPatch, session: SessionD
     await session.commit()
     await session.refresh(ticket)
     return ticket
+
+
+@router.delete("/{ticket_id}", status_code=204)
+async def delete_ticket(ticket_id: UUID, session: SessionDep) -> None:
+    ticket = await session.get(Ticket, ticket_id)
+    if ticket is None:
+        raise HTTPException(status_code=404, detail="ticket not found")
+    await session.delete(ticket)
+    await session.commit()

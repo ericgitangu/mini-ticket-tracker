@@ -25,13 +25,15 @@ class TicketCreate(BaseModel):
 
 
 class TicketPatch(BaseModel):
+    title: str | None = Field(default=None, min_length=1, max_length=200)
+    description: str | None = None
     status: Status | None = None
     priority: Priority | None = None
 
     @model_validator(mode="after")
     def require_one_field(self) -> "TicketPatch":
-        if self.status is None and self.priority is None:
-            raise ValueError("at least one of status or priority must be provided")
+        if not self.model_fields_set:
+            raise ValueError("provide at least one field to update")
         return self
 
 

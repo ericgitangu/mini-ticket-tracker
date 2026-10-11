@@ -60,3 +60,29 @@ async def test_stats_counts_by_status(client):
 
     assert response.status_code == 200
     assert response.json() == {"open": 2, "in_progress": 0, "closed": 1}
+
+
+async def test_patch_edits_title_and_description(client):
+    created = (await client.post("/tickets", json={"title": "typo in titel"})).json()
+
+    updated = await client.patch(
+        f"/tickets/{created['id']}",
+        json={"title": "Typo in title", "description": "now with detail"},
+    )
+
+    assert updated.status_code == 200
+    assert updated.json()["title"] == "Typo in title"
+    assert updated.json()["description"] == "now with detail"
+
+
+async def test_delete_ticket(client):
+    created = (await client.post("/tickets", json={"title": "temporary"})).json()
+
+    deleted = await client.delete(f"/tickets/{created['id']}")
+    assert deleted.status_code == 204
+
+    listed = await client.get("/tickets")
+    assert all(ticket["id"] != created["id"] for ticket in listed.json()["data"])
+
+    missing = await client.delete(f"/tickets/{created['id']}")
+    assert missing.status_code == 404
