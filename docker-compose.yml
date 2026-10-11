@@ -1,0 +1,33 @@
+# Local runtime. `docker compose up` starts Postgres and the API (migrations run on boot).
+# The Next.js web app is added alongside with the frontend.
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: tickets
+      POSTGRES_PASSWORD: tickets
+      POSTGRES_DB: tickets
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tickets -d tickets"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  api:
+    build: ./api
+    environment:
+      DATABASE_URL: postgresql+asyncpg://tickets:tickets@db:5432/tickets
+      CORS_ORIGINS: http://localhost:3000
+    command: sh -c "uv run --no-dev alembic upgrade head && uv run --no-dev uvicorn app.main:app --host 0.0.0.0 --port 8000"
+    ports:
+      - "8000:8000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
