@@ -12,6 +12,21 @@ A small support-ticket tracker: a REST API over PostgreSQL with a lightweight we
 
 Both services are complete, run together with one command, and the whole stack is containerized.
 
+## Architecture
+
+```mermaid
+flowchart LR
+    Browser -->|HTTP| Web[Next.js BFF]
+    Web -->|"RSC reads, Server Actions"| API[FastAPI]
+    API -->|"SQLAlchemy / asyncpg"| DB[(PostgreSQL)]
+    API -. "OpenAPI schema" .-> Gen[openapi-typescript]
+    Gen -. "generated client" .-> Web
+```
+
+The browser talks only to the Next.js server (BFF) — Server Components read, Server Actions mutate,
+and FastAPI is never called directly. Solid edges are request-time; the dotted edges are the
+build-time codegen that keeps the TypeScript client in sync with the API's OpenAPI schema.
+
 ## Prerequisites
 
 Pick one path.
@@ -81,15 +96,24 @@ common moon tasks; `docker compose` runs the whole stack with Postgres on a pers
 and both app sources bind-mounted for live reload.
 
 ## Deployment
-The API is a standalone container, deployable to any container host (the reference target is
-GCP Cloud Run with a managed Postgres such as Neon; the same image runs on Azure Container
-Apps). The web app deploys to Vercel and talks to the API server-side.
+Nothing in the code is cloud-specific. The API is a standalone container, so the same image ships to
+any managed container platform through the same mechanism — AWS (App Runner / ECS), GCP (Cloud Run),
+or Azure (Container Apps) — with a managed Postgres alongside. Given the company's Microsoft stack,
+Azure Container Apps + Azure Database for PostgreSQL would be the natural choice if and when we
+deploy. The web app deploys to Vercel and talks to the API server-side.
 
 ## Decisions & Tradeoffs
 - **Contract-first across the stack.** Pydantic models are the single source of truth; the API
   publishes an OpenAPI schema and the frontend generates its TypeScript client from it, so client
   and server can't drift. One extra codegen step buys end-to-end type safety across a language
   boundary — and keeps the API reusable by non-web consumers (mobile, reporting/BI).
+- **REST, not GraphQL.** Four fixed, well-shaped resources with no client-driven query flexibility
+  needed — REST + OpenAPI buys HTTP caching, a generated typed client, and far less machinery.
+  GraphQL earns its keep when many clients compose divergent or deeply nested queries; that isn't this.
+- **Python/FastAPI, with Rust the considered alternative.** For a latency-sensitive Lambda/edge
+  deployment, Rust (Axum + sqlx — one static binary, minimal cold start, compile-time-checked SQL)
+  would be the ideal fit. I stayed on Python to match the company's stack and keep the service
+  reviewable by the team; Rust is the move if this ever becomes an edge or high-throughput service.
 - **Separate persistence and API models.** The SQLAlchemy table and the Pydantic request/response
   schemas are distinct, so storage shape never leaks over the wire and the two evolve independently.
 - **Validation at the boundary, integrity in the database.** Enum and length checks live in
