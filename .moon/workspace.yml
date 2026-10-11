@@ -1,5 +1,6 @@
 $schema: 'https://moonrepo.dev/schemas/workspace.json'
 
-# Monorepo projects. The Next.js `web` app joins here with the frontend.
+# Monorepo projects.
 projects:
   api: 'api'
+  web: 'web'

@@ -1,6 +1,6 @@
-# Local runtime, fully containerized. `docker compose up --build`.
-# Postgres persists to a named volume; the API source is bind-mounted for live reload.
-# The Next.js web app joins here with the frontend.
+# Local runtime, fully containerized: Postgres + API + Next.js web, one command.
+# `docker compose up --build`. Postgres persists to a named volume; API and web
+# source are bind-mounted for live reload. Override host ports with DB_PORT / API_PORT / WEB_PORT.
 services:
   db:
     image: postgres:17-alpine
@@ -34,6 +34,22 @@ services:
     depends_on:
       db:
         condition: service_healthy
+
+  web:
+    build:
+      context: ./web
+      target: deps
+    environment:
+      API_BASE_URL: http://api:8000
+    command: sh -c "pnpm exec next dev --hostname 0.0.0.0 --port 3000"
+    volumes:
+      - ./web:/app
+      - /app/node_modules
+      - /app/.next
+    ports:
+      - "${WEB_PORT:-3000}:3000"
+    depends_on:
+      - api
 
 volumes:
   pgdata:

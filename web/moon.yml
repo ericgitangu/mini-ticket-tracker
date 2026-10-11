@@ -1,0 +1,21 @@
+$schema: 'https://moonrepo.dev/schemas/project.json'
+
+layer: 'application'
+language: 'typescript'
+
+tasks:
+  dev:
+    command: 'pnpm exec next dev'
+    toolchain: 'system'
+    preset: 'server'
+  build:
+    command: 'pnpm build'
+    toolchain: 'system'
+  lint:
+    command: 'pnpm lint'
+    toolchain: 'system'
+  gen-client:
+    command: 'pnpm exec openapi-typescript http://localhost:8000/openapi.json -o src/lib/api/schema.ts'
+    toolchain: 'system'
+    options:
+      cache: false
