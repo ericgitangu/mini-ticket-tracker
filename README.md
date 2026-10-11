@@ -58,6 +58,7 @@ cd api && uv run pytest          # or: make test   /   moon run api:test
 | `DATABASE_URL` | api     | `postgresql+asyncpg://tickets:tickets@localhost:5432/tickets` |
 | `CORS_ORIGINS` | api     | `http://localhost:3000` |
 | `API_BASE_URL` | web (server) | `http://localhost:8000` |
+| `NEXT_PUBLIC_API_DOCS_URL` | web | `http://localhost:8000/redoc` (footer "API docs" link) |
 | `DB_PORT`      | compose | host port for Postgres (default `5432`) |
 | `API_PORT`     | compose | host port for the API (default `8000`) |
 | `WEB_PORT`     | compose | host port for the web app (default `3000`) |

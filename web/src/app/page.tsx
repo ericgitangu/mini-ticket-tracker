@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 
 import { getStats, listTickets } from "@/lib/api/client";
+import { Footer } from "@/components/footer";
 import { NewTicketForm } from "@/components/new-ticket-form";
 import { QueueBar } from "@/components/queue-bar";
 import { TicketList } from "@/components/ticket-list";
@@ -16,6 +17,8 @@ export default function Page() {
       <Suspense fallback={<QueueSkeleton />}>
         <Dashboard />
       </Suspense>
+
+      <Footer />
     </main>
   );
 }
