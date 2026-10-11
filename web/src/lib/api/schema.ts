@@ -49,7 +49,8 @@ export interface paths {
         get?: never;
         put?: never;
         post?: never;
-        delete?: never;
+        /** Delete Ticket */
+        delete: operations["delete_ticket_tickets__ticket_id__delete"];
         options?: never;
         head?: never;
         /** Update Ticket */
@@ -151,6 +152,10 @@ export interface components {
         };
         /** TicketPatch */
         TicketPatch: {
+            /** Title */
+            title?: string | null;
+            /** Description */
+            description?: string | null;
             status?: components["schemas"]["Status"] | null;
             priority?: components["schemas"]["Priority"] | null;
         };
@@ -258,6 +263,35 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Stats"];
+                };
+            };
+        };
+    };
+    delete_ticket_tickets__ticket_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                ticket_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };

@@ -42,3 +42,6 @@ export const createTicket = (body: NewTicket) =>
 
 export const patchTicket = (id: string, body: TicketPatch) =>
   request<Ticket>(`/tickets/${id}`, { method: "PATCH", body: JSON.stringify(body) });
+
+export const deleteTicket = (id: string) =>
+  request<void>(`/tickets/${id}`, { method: "DELETE" });

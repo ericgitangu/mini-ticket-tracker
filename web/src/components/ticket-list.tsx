@@ -2,6 +2,7 @@ import { Card } from "@/components/ui/card";
 import type { Ticket } from "@/lib/api/types";
 import { PriorityBadge } from "./badges";
 import { StatusSelect } from "./status-select";
+import { TicketActions } from "./ticket-actions";
 
 function formatDate(iso: string) {
   return new Date(iso).toLocaleDateString("en-GB", {
@@ -41,6 +42,7 @@ export function TicketList({ tickets }: { tickets: Ticket[] }) {
           <div className="flex shrink-0 items-center gap-2">
             <PriorityBadge priority={ticket.priority} />
             <StatusSelect id={ticket.id} status={ticket.status} />
+            <TicketActions ticket={ticket} />
           </div>
         </div>
       ))}
