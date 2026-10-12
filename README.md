@@ -3,10 +3,10 @@
 <!-- markdownlint-disable MD013 -->
 ![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square&logo=fastapi&logoColor=white)
 ![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-17-4169E1?style=flat-square&logo=postgresql&logoColor=white)
 ![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2-D71F00?style=flat-square&logo=sqlalchemy&logoColor=white)
 ![Alembic](https://img.shields.io/badge/Alembic-migrations-6BA81E?style=flat-square)
-![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=flat-square&logo=nextdotjs&logoColor=white)
+![Next.js](https://img.shields.io/badge/Next.js-16-000000?style=flat-square&logo=nextdotjs&logoColor=white)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
 ![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-latest-000000?style=flat-square&logo=shadcnui&logoColor=white)
@@ -34,6 +34,51 @@ lightweight web UI.
 
 Both services are complete, run together with one command, and the
 whole stack is containerized.
+
+## Preview
+
+![Ticket Tracker — ticket list, create form, inline status change, edit and delete](assets/screenshot.jpg)
+
+### Endpoints
+
+| Method | Path             | Description |
+|--------|------------------|-------------|
+| POST   | `/tickets`       | Create a ticket |
+| GET    | `/tickets`       | List; `?status=` filter, `?page=&limit=` pagination |
+| PATCH  | `/tickets/{id}`  | Update status, priority, title, or description |
+| GET    | `/tickets/stats` | Counts grouped by status |
+| DELETE | `/tickets/{id}`  | Delete a ticket |
+
+A ticket: `id` (uuid), `title`, `description?`, `status`
+(`open|in_progress|closed`), `priority` (`low|medium|high`),
+`created_at`, `updated_at`. Interactive docs at `/docs` (Swagger) and
+`/redoc` (ReDoc).
+
+### Try it (curl + jq)
+
+```bash
+# Create
+curl -s -X POST localhost:8000/tickets \
+  -H 'content-type: application/json' \
+  -d '{"title":"Login button returns 500","priority":"high"}' | jq
+# → { "id": "…", "title": "…", "status": "open", "priority": "high", ... }
+
+# List open tickets (first page)
+curl -s 'localhost:8000/tickets?status=open&page=1&limit=20' \
+  | jq '{total, data: [.data[] | {id, title, status, priority}]}'
+
+# Counts by status
+curl -s localhost:8000/tickets/stats | jq
+# → { "open": 2, "in_progress": 1, "closed": 2 }
+
+# Update (any of status / priority / title / description)
+curl -s -X PATCH localhost:8000/tickets/$ID \
+  -H 'content-type: application/json' \
+  -d '{"status":"in_progress"}' | jq '{id, status}'
+
+# Delete
+curl -s -o /dev/null -w '%{http_code}\n' -X DELETE localhost:8000/tickets/$ID   # → 204
+```
 
 ## Architecture
 
@@ -111,20 +156,6 @@ cd api && uv run pytest     # or: make test   /   moon run api:test
 | `DB_PORT`                  | compose      | host port for Postgres (default `5432`)                       |
 | `API_PORT`                 | compose      | host port for the API (default `8000`)                        |
 | `WEB_PORT`                 | compose      | host port for the web app (default `3000`)                    |
-
-## API
-
-| Method | Path             | Description                                                   |
-|--------|------------------|---------------------------------------------------------------|
-| POST   | `/tickets`       | Create a ticket                                               |
-| GET    | `/tickets`       | List tickets; `?status=` filter, `?page=&limit=` pagination   |
-| PATCH  | `/tickets/{id}`  | Update a ticket's status and/or priority                      |
-| GET    | `/tickets/stats` | Ticket counts grouped by status                               |
-
-A ticket has: `id` (uuid), `title`, `description?`, `status`
-(`open|in_progress|closed`), `priority` (`low|medium|high`),
-`created_at`, `updated_at`. Interactive docs at `/docs` (Swagger) and
-`/redoc` (ReDoc).
 
 ## Layout
 
