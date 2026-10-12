@@ -41,21 +41,22 @@ whole stack is containerized.
 
 ### API docs (`:8000`)
 
-FastAPI serves interactive docs with zero config — Swagger at `/docs`, ReDoc at `/redoc`.
+FastAPI serves interactive docs with zero config — Swagger at `/docs`,
+ReDoc at `/redoc`.
 
-| Swagger (`/docs`) | ReDoc (`/redoc`) |
-|-------------------|------------------|
+| Swagger (`/docs`)                 | ReDoc (`/redoc`)           |
+|-----------------------------------|----------------------------|
 | ![Swagger UI](assets/swagger.jpg) | ![ReDoc](assets/redoc.jpg) |
 
 ### Endpoints
 
-| Method | Path             | Description |
-|--------|------------------|-------------|
-| POST   | `/tickets`       | Create a ticket |
+| Method | Path             | Description                                         |
+|--------|------------------|-----------------------------------------------------|
+| POST   | `/tickets`       | Create a ticket                                     |
 | GET    | `/tickets`       | List; `?status=` filter, `?page=&limit=` pagination |
-| PATCH  | `/tickets/{id}`  | Update status, priority, title, or description |
-| GET    | `/tickets/stats` | Counts grouped by status |
-| DELETE | `/tickets/{id}`  | Delete a ticket |
+| PATCH  | `/tickets/{id}`  | Update status, priority, title, or description      |
+| GET    | `/tickets/stats` | Counts grouped by status                            |
+| DELETE | `/tickets/{id}`  | Delete a ticket                                     |
 
 A ticket: `id` (uuid), `title`, `description?`, `status`
 (`open|in_progress|closed`), `priority` (`low|medium|high`),
