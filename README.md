@@ -39,6 +39,14 @@ whole stack is containerized.
 
 ![Ticket Tracker — ticket list, create form, inline status change, edit and delete](assets/screenshot.jpg)
 
+### API docs (`:8000`)
+
+FastAPI serves interactive docs with zero config — Swagger at `/docs`, ReDoc at `/redoc`.
+
+| Swagger (`/docs`) | ReDoc (`/redoc`) |
+|-------------------|------------------|
+| ![Swagger UI](assets/swagger.jpg) | ![ReDoc](assets/redoc.jpg) |
+
 ### Endpoints
 
 | Method | Path             | Description |
@@ -56,28 +64,103 @@ A ticket: `id` (uuid), `title`, `description?`, `status`
 
 ### Try it (curl + jq)
 
+**Create** — `POST /tickets`
+
 ```bash
-# Create
 curl -s -X POST localhost:8000/tickets \
   -H 'content-type: application/json' \
   -d '{"title":"Login button returns 500","priority":"high"}' | jq
-# → { "id": "…", "title": "…", "status": "open", "priority": "high", ... }
+```
 
-# List open tickets (first page)
-curl -s 'localhost:8000/tickets?status=open&page=1&limit=20' \
-  | jq '{total, data: [.data[] | {id, title, status, priority}]}'
+```json
+{
+  "id": "b49906c8-4c92-49b2-9dc0-9ef5d288f38d",
+  "title": "Login button returns 500",
+  "description": null,
+  "status": "open",
+  "priority": "high",
+  "created_at": "2026-10-12T05:13:05.801534Z",
+  "updated_at": "2026-10-12T05:13:05.801534Z"
+}
+```
 
-# Counts by status
+**List** — `GET /tickets` (status filter + pagination)
+
+```bash
+curl -s 'localhost:8000/tickets?status=open&page=1&limit=2' | jq
+```
+
+```json
+{
+  "data": [
+    {
+      "id": "2be4c21c-a4a7-49a2-880f-4b6811a6d2ff",
+      "title": "Investigate elevated 5xx on checkout",
+      "description": "Likely a retry storm — 5xx spikes on checkout",
+      "status": "open",
+      "priority": "medium",
+      "created_at": "2026-10-11T14:08:12.491604Z",
+      "updated_at": "2026-10-11T14:46:22.359620Z"
+    },
+    {
+      "id": "80a16db8-22e5-453a-9b24-51a9becc73ed",
+      "title": "Payment webhook returning 500 on retry",
+      "description": null,
+      "status": "open",
+      "priority": "high",
+      "created_at": "2026-10-11T13:43:58.160489Z",
+      "updated_at": "2026-10-11T13:43:58.160489Z"
+    }
+  ],
+  "page": 1,
+  "limit": 2,
+  "total": 2,
+  "total_pages": 1
+}
+```
+
+**Stats** — `GET /tickets/stats`
+
+```bash
 curl -s localhost:8000/tickets/stats | jq
-# → { "open": 2, "in_progress": 1, "closed": 2 }
+```
 
-# Update (any of status / priority / title / description)
+```json
+{
+  "open": 2,
+  "in_progress": 1,
+  "closed": 2
+}
+```
+
+**Update** — `PATCH /tickets/{id}` (any of status / priority / title / description)
+
+```bash
 curl -s -X PATCH localhost:8000/tickets/$ID \
   -H 'content-type: application/json' \
-  -d '{"status":"in_progress"}' | jq '{id, status}'
+  -d '{"status":"in_progress"}' | jq
+```
 
-# Delete
-curl -s -o /dev/null -w '%{http_code}\n' -X DELETE localhost:8000/tickets/$ID   # → 204
+```json
+{
+  "id": "b49906c8-4c92-49b2-9dc0-9ef5d288f38d",
+  "title": "Login button returns 500",
+  "description": null,
+  "status": "in_progress",
+  "priority": "high",
+  "created_at": "2026-10-12T05:13:05.801534Z",
+  "updated_at": "2026-10-12T05:13:05.826757Z"
+}
+```
+
+**Delete** — `DELETE /tickets/{id}` → `204 No Content`
+
+```bash
+curl -s -o /dev/null -w '%{http_code}\n' -X DELETE localhost:8000/tickets/$ID
+```
+
+```text
+204
 ```
 
 ## Architecture
