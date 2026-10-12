@@ -1,5 +1,23 @@
 # Mini Ticket Tracker
 
+<!-- markdownlint-disable MD013 -->
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115-009688?style=flat-square&logo=fastapi&logoColor=white)
+![Python](https://img.shields.io/badge/Python-3.12-3776AB?style=flat-square&logo=python&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-4169E1?style=flat-square&logo=postgresql&logoColor=white)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2-D71F00?style=flat-square&logo=sqlalchemy&logoColor=white)
+![Alembic](https://img.shields.io/badge/Alembic-migrations-6BA81E?style=flat-square)
+![Next.js](https://img.shields.io/badge/Next.js-15-000000?style=flat-square&logo=nextdotjs&logoColor=white)
+![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react&logoColor=black)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)
+![shadcn/ui](https://img.shields.io/badge/shadcn%2Fui-latest-000000?style=flat-square&logo=shadcnui&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-compose-2496ED?style=flat-square&logo=docker&logoColor=white)
+![uv](https://img.shields.io/badge/uv-package--manager-DE5FE9?style=flat-square&logo=astral&logoColor=white)
+![pnpm](https://img.shields.io/badge/pnpm-9-F69220?style=flat-square&logo=pnpm&logoColor=white)
+![moon](https://img.shields.io/badge/moon-monorepo-6F42C1?style=flat-square)
+![Ruff](https://img.shields.io/badge/Ruff-linter-D7FF64?style=flat-square&logo=ruff&logoColor=black)
+![pytest](https://img.shields.io/badge/pytest-tested-0A9EDC?style=flat-square&logo=pytest&logoColor=white)
+<!-- markdownlint-enable MD013 -->
+
 A small support-ticket tracker: a REST API over PostgreSQL with a
 lightweight web UI.
 
