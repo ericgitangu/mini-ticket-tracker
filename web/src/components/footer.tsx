@@ -46,7 +46,6 @@ export function Footer() {
           </a>
         ))}
       </nav>
-      <p className="mt-4 text-center text-xs text-muted-foreground">Built by Eric Gitangu</p>
     </footer>
   );
 }

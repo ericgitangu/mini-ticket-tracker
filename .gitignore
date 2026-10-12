@@ -36,3 +36,4 @@ web/AGENTS.md
 dist/
 build/
 coverage/
+.markdownlint.json
